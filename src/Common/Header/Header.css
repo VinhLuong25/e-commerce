@@ -1,0 +1,104 @@
+.searchBar {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.fixed-bar, .navBar .navBar__left, .navBar .navBar__right {
+  position: fixed;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  background: #f1f1f1;
+  padding: 5px 0px;
+  width: 10vw;
+  height: 100vh;
+  z-index: 5;
+}
+
+@media screen and (min-width: 600px) {
+  .fixed-bar, .navBar .navBar__left, .navBar .navBar__right {
+    width: 8vw;
+  }
+}
+
+@media screen and (min-width: 1500px) {
+  .fixed-bar, .navBar .navBar__left, .navBar .navBar__right {
+    width: 5%;
+  }
+}
+
+.navBar .navBar__left .logo {
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 550;
+  text-decoration: none;
+  color: black;
+}
+
+.navBar .navBar__right {
+  right: 0px;
+}
+
+.navBar .navBar__right .shopping-bag {
+  position: relative;
+}
+
+.navBar .navBar__right .shopping-bag .total-quantity {
+  text-align: center;
+  position: relative;
+  bottom: 33%;
+  font-weight: bold;
+}
+
+.navBar .navBar__right .fa,
+.navBar .navBar__right .log-out {
+  padding: 5px;
+  font-size: 25px;
+  width: 30px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 20%;
+  margin: 3px 0px;
+}
+
+.navBar .navBar__right .fa:hover,
+.navBar .navBar__right .log-out:hover {
+  opacity: 0.7;
+}
+
+.navBar .navBar__right .social-icon {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.navBar .navBar__right .social-icon .fa-facebook {
+  background: #3b5998;
+  color: white;
+}
+
+.navBar .navBar__right .social-icon .fa-twitter {
+  background: #55acee;
+  color: white;
+}
+
+.navBar .navBar__right .social-icon .fa-instagram {
+  background: #125688;
+  color: white;
+}
+/*# sourceMappingURL=Header.css.map */
