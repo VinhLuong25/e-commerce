@@ -1,0 +1,85 @@
+@import "../../style/variable.scss";
+
+.searchBar {
+  display: flex;
+}
+.fixed-bar {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  background: $secondary-color;
+  padding: 5px 0px;
+  width: 10vw;
+  height: 100vh;
+  z-index: 5;
+}
+@media screen and (min-width: 600px) {
+  .fixed-bar {
+    width: 8vw;
+  }
+}
+@media screen and (min-width: 1500px) {
+  .fixed-bar {
+    width: 5%;
+  }
+}
+.navBar {
+  #{&}__left {
+    @extend .fixed-bar;
+    .logo {
+      margin-top: 10px;
+      font-size: 12px;
+      font-weight: 550;
+      text-decoration: none;
+      color: $primary-color;
+    }
+  }
+  #{&}__right {
+    @extend .fixed-bar;
+    right: 0px;
+    .shopping-bag {
+      position: relative;
+
+      .total-quantity {
+        text-align: center;
+        position: relative;
+        bottom: 33%;
+        font-weight: bold;
+      }
+    }
+
+    .fa,
+    .log-out {
+      padding: 5px;
+      font-size: 25px;
+      width: 30px;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 20%;
+      margin: 3px 0px;
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+    .social-icon {
+      display: flex;
+      flex-direction: column;
+
+      .fa-facebook {
+        background: #3b5998;
+        color: white;
+      }
+
+      .fa-twitter {
+        background: #55acee;
+        color: white;
+      }
+      .fa-instagram {
+        background: #125688;
+        color: white;
+      }
+    }
+  }
+}

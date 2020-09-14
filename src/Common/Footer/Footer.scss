@@ -1,0 +1,33 @@
+@import "../../style/variable.scss";
+
+.footer {
+  position: relative;
+  top: 100%;
+  bottom: 0;
+  width: 100%;
+
+  .first-footer {
+    padding: 10px 50px;
+    background-color: $third-color;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    .column {
+      margin-top: 10px;
+      .title {
+        font-weight: bold;
+        font-size: 12px;
+        text-transform: uppercase;
+      }
+      .location,
+      .phone {
+        display: flex;
+        i {
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+  .second-footer {
+    text-align: center;
+  }
+}
