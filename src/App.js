@@ -12,6 +12,9 @@ import ProductDetail from "./pages/ProductDetail";
 import { useDispatch } from "react-redux";
 import { fetchProduct } from "./redux/productSlice";
 import CartSlide from "./components/CartSlide";
+import SaleProduct from "./pages/SaleProduct";
+import CheckOutPage from "./pages/CheckOutPage";
+import PaymentSuccess from "./pages/PaymentSuccess";
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const dispatch = useDispatch();
@@ -52,11 +55,16 @@ function App() {
 
           <Route exact path="/recovery" component={ResetPassword} />
           <Route exact path="/latest-product" component={LatestProduct} />
+          <Route exact path="/checkout" component={CheckOutPage} />
+
+          <Route exact path="/sale-product" component={SaleProduct} />
+          <Route exact path="/payment-success" component={PaymentSuccess} />
           <Route
             exact
             path="/latest-product/:prodId"
             component={ProductDetail}
           />
+          <Route exact path="/latest-product/:slug" component={ProductDetail} />
         </Switch>
       </div>
 

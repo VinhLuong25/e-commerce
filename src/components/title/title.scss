@@ -1,0 +1,14 @@
+@import "../../style/variable.scss";
+.title {
+    padding: 30px 0;
+    .bold {
+        width: 30px;
+        height: 3px;
+        background-color: $decent-color;
+    }
+    .text {
+        font-weight: 500;
+        font-size: 30px;
+        line-height: 35px;
+    }
+}

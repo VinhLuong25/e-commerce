@@ -5,6 +5,8 @@ import { signInWithGoogle, auth, handleUserProfile } from "../firebase/utils";
 import SignUp from "./SignUp";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/userSlice";
 
 export default function Login() {
   const [displayName, setDisplayName] = useState("");
@@ -14,6 +16,7 @@ export default function Login() {
   const [hasAccount, setHasAccount] = useState("");
   const [errEmail, setErrEmail] = useState("");
   const [errPassword, setErrPassword] = useState("");
+  const dispatch = useDispatch();
 
   const clearInput = () => {
     setDisplayName("");
@@ -62,7 +65,15 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      await auth.signInWithEmailAndPassword(email, password);
+      const { user } = await auth.signInWithEmailAndPassword(email, password);
+      console.log(user.uid);
+      dispatch(
+        setUser({
+          displayName: user.displayName,
+          email: user.email,
+          uid: user.uid,
+        })
+      );
     } catch (error) {
       switch (error.code) {
         case "auth/invalid-email":

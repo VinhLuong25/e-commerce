@@ -1,32 +1,51 @@
 import React from "react";
+import { useRef, useEffect } from "react";
 import ProductInCart from "./ProductInCart";
 import Button from "./forms/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { clearCart } from "../redux/cartSlice";
+import { Link } from "react-router-dom";
 export default function CartSlide() {
   const inCart = useSelector((state) => state.cart);
-  console.log(inCart);
-  const totalQuantity = inCart.count;
+  const ref = useRef(null);
   const cart = inCart.cart;
 
   const dispatch = useDispatch();
   const subtotal = cart.reduce((acc, curr) => {
-    return acc + curr.quantity * curr.prodDetail.price;
+    if (curr.prodDetail.sale) {
+      return acc + curr.quantity * curr.prodDetail.sale;
+    } else {
+      return acc + curr.quantity * curr.prodDetail.price;
+    }
   }, 0);
   const shippingFee = cart.length < 1 ? 0 : 15 && subtotal >= 300 ? 0 : 15;
 
   const total = subtotal + shippingFee;
+
   const clearCarts = () => {
-    const prod = [];
-    dispatch(clearCart(prod));
+    dispatch(clearCart());
   };
 
+  //Handle close cart
   const closeCart = () => {
     const cartSlide = document.querySelector(".cart-slide");
     cartSlide.style.transform = "translateX(1300px)";
   };
+  const handleClickOutside = (event) => {
+    if (ref.current && !ref.current.contains(event.target)) {
+      closeCart();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.addEventListener("mousedown", handleClickOutside);
+    };
+  });
+
   return (
-    <div className="cart-slide">
+    <div className="cart-slide" ref={ref}>
       <div className="title">
         <h2>Your Cart</h2>
         <h3 onClick={() => closeCart()}>X</h3>
@@ -40,17 +59,17 @@ export default function CartSlide() {
             const size = prod.size;
             const quantityEach = prod.quantity;
             return (
-              <>
-                <ProductInCart
-                  key={index}
-                  product={productDetail}
-                  size={size}
-                  quantityEach={quantityEach}
-                />
-                <Button onClick={() => clearCarts()}>Clear Cart</Button>
-              </>
+              <ProductInCart
+                key={index}
+                product={productDetail}
+                size={size}
+                quantityEach={quantityEach}
+              />
             );
           })
+        )}
+        {cart.length >= 1 && (
+          <Button onClick={() => clearCarts()}>Clear Cart</Button>
         )}
       </div>
 
@@ -67,9 +86,11 @@ export default function CartSlide() {
             <p>${total}</p>
           </div>
         </div>
-        <Button style={{ background: "white", color: "black", width: "70%" }}>
-          CHECK OUT
-        </Button>
+        <Link to="/checkout">
+          <Button className="checkout-btn" onClick={() => closeCart()}>
+            CHECK OUT
+          </Button>
+        </Link>
       </div>
     </div>
   );

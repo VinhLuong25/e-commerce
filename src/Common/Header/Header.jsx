@@ -1,29 +1,68 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import SearchBar from "../../components/SearchBar";
 import "./Header.scss";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { auth } from "../../firebase/utils";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import MenuNav from "../../components/MenuNav";
+import { Power3, gsap } from "gsap";
+import Filter from "../../components/Filter";
+import { setUser } from "../../redux/userSlice";
 
 export default function Header(props) {
   const { currentUser } = props;
+  const location = useLocation();
+  const dispatch = useDispatch();
+
   const totalQuantity = useSelector((state) => state.cart.count);
   const openCart = () => {
     const cartSlide = document.querySelector(".cart-slide");
     cartSlide.style.transform = "translateX(0px)";
   };
+
+  const openMenu = () => {
+    const menuNav = document.querySelector(".menu-nav");
+    menuNav.style.transform = "translateX(0px)";
+  };
+  const openFilter = () => {
+    const filterBar = document.querySelector(".filter-bar");
+    filterBar.style.transform = "translateX(0px)";
+  };
+  //Animation
+  let navigationLeft = useRef(null);
+  let navigationRight = useRef(null);
+  useEffect(() => {
+    gsap.to(navigationLeft, 1.5, { x: 0, ease: Power3.easeInOut });
+    gsap.to(navigationRight, 1.5, { x: 0, ease: Power3.easeInOut });
+  });
   return (
     <>
       <div className="navBar">
-        <div className="navBar__left">
+        <div className="navBar__left" ref={(el) => (navigationLeft = el)}>
           <Link to="/" className="logo">
             M.A.D
           </Link>
-
-          <p>abc</p>
-          <p>abc</p>
+          <div>
+            <MenuNav />
+            <div className="nav-btn" onClick={() => openMenu()}>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+          {location.pathname === "/latest-product" ||
+          location.pathname === "/sale-product" ? (
+            <div>
+              <Filter />
+              <div onClick={() => openFilter()} className="filter-btn">
+                Filter +
+              </div>
+            </div>
+          ) : (
+            <p>{""}</p>
+          )}
         </div>
-        <div className="navBar__right">
+        <div className="navBar__right" ref={(el) => (navigationRight = el)}>
           <SearchBar />
           <div>
             {currentUser ? (
@@ -31,7 +70,14 @@ export default function Header(props) {
                 <Link to="/login">
                   <i className="fa fa-user" style={{ color: "black" }}></i>
                 </Link>
-                <p onClick={() => auth.signOut()}>Log Out</p>
+                <p
+                  onClick={() => {
+                    auth.signOut();
+                    dispatch(setUser(null));
+                  }}
+                >
+                  Log Out
+                </p>
               </div>
             ) : (
               <Link to="/login">
@@ -39,6 +85,7 @@ export default function Header(props) {
               </Link>
             )}
           </div>
+
           <div className="shopping-bag" onClick={() => openCart()}>
             <svg
               className="bag"

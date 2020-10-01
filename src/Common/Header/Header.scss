@@ -1,5 +1,20 @@
 @import "../../style/variable.scss";
 
+.filter-btn {
+  cursor: pointer;
+  background-color: $third-color;
+  opacity: 0.9;
+  color: black;
+  border-radius: 20px;
+  font-size: 20px;
+  padding: 6px;
+  transition: all ease 0.2s;
+  &:hover {
+    background: $primary-color;
+    opacity: 0.8;
+    color: white;
+  }
+}
 .searchBar {
   display: flex;
 }
@@ -28,6 +43,7 @@
 .navBar {
   #{&}__left {
     @extend .fixed-bar;
+    transform: translateX(-100px);
     .logo {
       margin-top: 10px;
       font-size: 12px;
@@ -35,9 +51,31 @@
       text-decoration: none;
       color: $primary-color;
     }
+    .nav-btn {
+      margin: auto;
+
+      & div:nth-child(1) {
+        width: 18px;
+        height: 4px;
+        background: $primary-color;
+      }
+      & div:nth-child(2) {
+        width: 28px;
+        height: 4px;
+        background: $primary-color;
+        margin-top: 8px;
+      }
+      & div:nth-child(3) {
+        width: 38px;
+        height: 4px;
+        background: $primary-color;
+        margin-top: 8px;
+      }
+    }
   }
   #{&}__right {
     @extend .fixed-bar;
+    transform: translateX(100px);
     right: 0px;
     .shopping-bag {
       position: relative;
@@ -79,6 +117,24 @@
       .fa-instagram {
         background: #125688;
         color: white;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 800px) {
+  .navBar {
+    #{&}__left {
+      .nav-btn {
+        & div:nth-child(1) {
+          width: 25px;
+        }
+        & div:nth-child(2) {
+          width: 35px;
+        }
+        & div:nth-child(3) {
+          width: 45px;
+        }
       }
     }
   }

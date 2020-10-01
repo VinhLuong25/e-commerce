@@ -29,8 +29,8 @@ const cartSlice = createSlice({
       }
     },
 
-    clearCart(state, action) {
-      state.cart = action.payload;
+    clearCart(state) {
+      state.cart = [];
       state.count = 0;
     },
 

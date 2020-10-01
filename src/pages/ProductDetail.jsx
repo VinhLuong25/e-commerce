@@ -40,8 +40,18 @@ export default function ProductDetail(props) {
   const renderProduct = () => {
     if (!product) return;
 
-    const { image, brand, name, color, description, price, size } = product;
+    const {
+      image,
+      brand,
+      name,
+      color,
+      description,
+      price,
+      size,
+      sale,
+    } = product;
 
+    const stockCheck = (size) => size.every((siz) => siz.quantity === 0);
     return (
       <div className="detail-product">
         <Carousel className="carousel">
@@ -100,7 +110,16 @@ export default function ProductDetail(props) {
             </div>
           )}
 
-          <h3 className="price">${price}</h3>
+          <h3 className="price">
+            {sale ? (
+              <span className="sale-price">
+                <s>${price}</s> ${sale}
+              </span>
+            ) : (
+              <span>${price}</span>
+            )}
+            {stockCheck(size) && <span className="sold-out"> Sold Out </span>}
+          </h3>
 
           <InfoBox infoTitle="Size Information" info="asbdasjkdb" />
           <InfoBox

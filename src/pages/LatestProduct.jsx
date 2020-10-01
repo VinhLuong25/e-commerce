@@ -1,39 +1,47 @@
-import React from "react";
-import { Container, Row, Col, Card } from "react-bootstrap";
+import React, { useState } from "react";
+import { Container } from "react-bootstrap";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import Pagination from "../components/Pagination";
+import ProductCard from "../components/ProductCard";
+import Title from "../components/title/Title";
 
 export default function LatestProduct() {
-  const { products, loading, hasErrors } = useSelector(
+  const { latestProduct, loading, hasErrors, products } = useSelector(
     (state) => state.product
   );
-  const renderProduct = () => {
-    if (loading) return <p>Loading ...</p>;
-    if (hasErrors) return <p>Cannot display products...</p>;
-    return products.map((product, index) => {
-      const { id, image, brand, name, price } = product;
-      const mainImg = image[0].name;
-      return (
-        <Col lg="3" md="4" sm="6" xs="12" key={index}>
-          <Card key={id} className="card">
-            <Link to={{ pathname: `/latest-product/${id}` }}>
-              <Card.Img src={mainImg} />
-            </Link>
-            <div className="detail">
-              <p className="brand">{brand}</p>
-              <p className="title">{name}</p>
-              <p className="price">AUD$ {price}</p>
-            </div>
-          </Card>
-        </Col>
-      );
-    });
-  };
+  const location = useLocation();
+  const nonSaleProduct =
+    location.search === ""
+      ? products.filter((prod) => prod.sale === null)
+      : latestProduct;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postsPerPage] = useState(12);
+
+  // Get current posts
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentProducts = nonSaleProduct.slice(
+    indexOfFirstPost,
+    indexOfLastPost
+  );
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <>
       <Container fluid>
-        <Row>{renderProduct()}</Row>
+        <Title>Latest</Title>
+        <ProductCard
+          currentProducts={currentProducts}
+          loading={loading}
+          hasErrors={hasErrors}
+        />
+        <Pagination
+          postsPerPage={postsPerPage}
+          totalPosts={nonSaleProduct.length}
+          paginate={paginate}
+        />
       </Container>
     </>
   );

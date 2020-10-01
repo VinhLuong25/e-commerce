@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 
 export default function ProductInCart(props) {
   const { product, size, quantityEach } = props;
-  const { name, color, price, image, id } = product;
+  const { name, color, price, image, id, sale } = product;
   const img = image[0].name;
   const dispatch = useDispatch();
 
@@ -38,7 +38,6 @@ export default function ProductInCart(props) {
   };
 
   const removeProd = () => {
-    console.log("ababab");
     dispatch(
       removeProduct({
         id: id,
@@ -51,9 +50,9 @@ export default function ProductInCart(props) {
       <div style={{ border: "solid 1px #a7a6a6", marginBottom: "20px" }}></div>
       <Row style={{ paddingLeft: "10px" }}>
         <Col xs="3">
-          <img src={img} alt="" className="image" />
+          <img src={img} alt="" className="image-fluid" />
         </Col>
-        <Col xs="6" className="col-2">
+        <Col xs="6" className="detail-col">
           <div className="detail-text">
             <span>
               <b>{name}</b>
@@ -65,13 +64,27 @@ export default function ProductInCart(props) {
               <b> Size: {size}</b>
             </span>
           </div>
-          <FontAwesomeIcon icon={faMinus} onClick={() => decrementProd()} />
-          <span>{quantityEach}</span>
-          <FontAwesomeIcon icon={faPlus} onClick={() => incrementProd()} />
+          <div className="quantity-box">
+            <FontAwesomeIcon
+              icon={faMinus}
+              onClick={() => decrementProd()}
+              className="icon"
+            />
+            <span>{quantityEach}</span>
+            <FontAwesomeIcon
+              icon={faPlus}
+              onClick={() => incrementProd()}
+              className="icon"
+            />
+          </div>
         </Col>
         <Col xs="3" className="price-col">
           <FontAwesomeIcon icon={faTrashAlt} onClick={() => removeProd()} />
-          <p>${price * quantityEach}</p>
+          {sale ? (
+            <p>${sale * quantityEach}</p>
+          ) : (
+            <p>${price * quantityEach}</p>
+          )}
         </Col>
       </Row>
     </Container>
