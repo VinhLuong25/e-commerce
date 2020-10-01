@@ -3,7 +3,7 @@ import { Col, Container, Row } from "react-bootstrap";
 
 export default function CheckOutProduct(props) {
   const { product, size, quantityEach } = props;
-  const { name, color, price, image, id, sale } = product;
+  const { name, color, price, image, sale } = product;
   const img = image[0].name;
   return (
     <Container fluid style={{ position: "relative" }}>
