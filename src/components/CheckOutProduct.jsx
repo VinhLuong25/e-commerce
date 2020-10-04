@@ -1,62 +1,54 @@
 import React from "react";
-import { Col, Container, Row } from "react-bootstrap";
 
 export default function CheckOutProduct(props) {
   const { product, size, quantityEach } = props;
   const { name, color, price, image, sale } = product;
   const img = image[0].name;
   return (
-    <Container fluid style={{ position: "relative" }}>
-      <Row>
-        <Col xs="4" style={{ position: "relative" }}>
-          <img
-            src={img}
-            alt=""
-            className="image-fluid"
-            style={{ position: "relative" }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "30px",
-              height: "30px",
-              textAlign: "center",
-              border: "solid 1px black",
-              borderRadius: "50%",
-              background: "grey",
-              color: "white",
-              right: "0",
-              top: "0",
-            }}
-          >
-            {quantityEach}
-          </div>
-        </Col>
-        <Col xs="4">
-          {" "}
-          <div className="detail-text">
+    <table className="product-table">
+      <thead className="header">
+        <tr>
+          <th>
+            <span>image</span>
+          </th>
+          <th>
+            <span>description</span>
+          </th>
+          <th>
+            <span>price</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody className="body">
+        <tr>
+          <td className="product-image">
+            <div className="product-thumbnail">
+              <div className="product-wrapper">
+                <img src={img} alt="" className="image-fluid" />
+              </div>
+              <span className="quantity">{quantityEach}</span>
+            </div>
+          </td>
+          <td>
             <span>
               <b>{name}</b>
             </span>
-            <br></br>
+            <br />
             <span>{color}</span>
             <br />
             <span>
-              <b> Size: {size}</b>
+              <b>{size}</b>
             </span>
-          </div>
-        </Col>
-        <Col xs="4">
-          {sale ? (
-            <p>${sale * quantityEach}</p>
-          ) : (
-            <p>${price * quantityEach}</p>
-          )}
-        </Col>
-      </Row>
-    </Container>
+          </td>
+          <td className="price">
+            {sale ? (
+              <p>${sale * quantityEach}</p>
+            ) : (
+              <p>${price * quantityEach}</p>
+            )}
+          </td>
+        </tr>
+      </tbody>
+    </table>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../components/forms/Button";
 import axios from "axios";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
@@ -11,10 +11,13 @@ import CheckOutProduct from "../components/CheckOutProduct";
 export default function CheckOut({ onSuccessfulCheckout }) {
   const [isProcessing, setProcessingTo] = useState(false);
   const [checkoutError, setCheckoutError] = useState();
+  const [screenSize, setScreenSize] = useState(window.innerWidth);
+  const [show, setShow] = useState(false);
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.cart);
-  console.log(cart);
   const user = useSelector((state) => state.user.currUser);
+  const timeStamp = new Date();
+  console.log(timeStamp);
   console.log(user);
   //Total Price
   const subtotal = cart.reduce((acc, curr) => {
@@ -94,53 +97,107 @@ export default function CheckOut({ onSuccessfulCheckout }) {
         setProcessingTo(false);
         return;
       }
+      //REMEMBER TO FIX THIS
+      if (user) {
+        firestore
+          .collection("users")
+          .doc(user?.uid)
+          .collection("orders")
+          .doc(paymentMethod.id)
+          .set({
+            basket: cart,
+            amount: total,
+            created_at: timeStamp,
+          });
+      }
+      onSuccessfulCheckout();
+      dispatch(clearCart());
     } catch (err) {
       setCheckoutError(err.message);
+      setProcessingTo(false);
     }
-
-    //REMEMBER TO FIX THIS
-    if (user) {
-      firestore
-        .collection("users")
-        .doc(user?.uid)
-        .collection("orders")
-        .doc(paymentMethod.id)
-        .set({
-          basket: cart,
-          amount: total,
-        });
-    }
-
-    onSuccessfulCheckout();
-    dispatch(clearCart());
   };
+
+  //GET WIDTH (screen size)
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenSize(window.innerWidth);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.addEventListener("resize", handleResize);
+    };
+  }, []);
+  useEffect(() => {
+    screenSize < 1500 && setShow(false);
+  }, [screenSize]);
+
   return (
-    <>
-      <form onSubmit={handleFormSubmit}>
+    <div className="checkout-page">
+      <div className="checkout-cart">
+        <div className="show-hide" onClick={() => setShow(!show)}>
+          {screenSize < 1500 ? (
+            <div className="wrap">
+              <span>{show ? "Hide" : "Show"} Order Summary</span>
+              <span>${total}</span>
+            </div>
+          ) : (
+            <div className="wrap">
+              <span> Order Summary</span>
+            </div>
+          )}
+        </div>
+        <div className="summary-cart">
+          {(show || screenSize >= 1500) && (
+            <div className="wrap">
+              {cart.map((prod, index) => {
+                const productDetail = prod.prodDetail;
+                const size = prod.size;
+                const quantityEach = prod.quantity;
+                return (
+                  <CheckOutProduct
+                    key={index}
+                    product={productDetail}
+                    size={size}
+                    quantityEach={quantityEach}
+                  />
+                );
+              })}
+              <hr />
+              <form className="discount">
+                <input type="text" placeholder="Discount Code" />
+                <input type="submit" value="APPLY" />
+              </form>
+              <hr />
+              <div className="total">
+                <p>
+                  <span>Total</span>
+                  <br />
+                  <span>*Shipping fee included</span>
+                </p>
+
+                <p>${total}</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <form onSubmit={handleFormSubmit} className="form wrap">
+        {screenSize >= 1500 && <h1 className="title">M.A.D</h1>}
         <BillingDetail />
         <div className="cardElementContainer">
           <CardElement onChange={handleCardDetailsChange} />
         </div>
         {checkoutError && <p>{checkoutError}</p>}
-        <Button type="submit" disabled={isProcessing || !stripe}>
+        <Button
+          type="submit"
+          style={{ height: "7vh" }}
+          disabled={isProcessing || !stripe}
+        >
           {isProcessing ? "Processing..." : `Pay $${total}`}
         </Button>
       </form>
-      <div className="sumary-cart">
-        {cart.map((prod, index) => {
-          const productDetail = prod.prodDetail;
-          const size = prod.size;
-          const quantityEach = prod.quantity;
-          return (
-            <CheckOutProduct
-              key={index}
-              product={productDetail}
-              size={size}
-              quantityEach={quantityEach}
-            />
-          );
-        })}
-      </div>
-    </>
+    </div>
   );
 }
