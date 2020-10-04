@@ -13,7 +13,7 @@
   position: relative;
   width: 80%;
   margin: auto;
-  min-height: calc(100vh - 30vh);
+  min-height: calc(100vh - 25vh);
   z-index: 1;
 }
 .bottom-footer {
@@ -21,7 +21,7 @@
   bottom: 0;
   width: 80%;
   margin: auto;
-  height: 30vh;
+  height: auto;
 }
 @media screen and (min-width: 600px) {
   .main,

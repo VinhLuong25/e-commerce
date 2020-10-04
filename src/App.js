@@ -58,7 +58,11 @@ function App() {
           <Route exact path="/checkout" component={CheckOutPage} />
 
           <Route exact path="/sale-product" component={SaleProduct} />
-          <Route exact path="/payment-success" component={PaymentSuccess} />
+          <Route
+            exact
+            path="/payment-success"
+            render={() => <PaymentSuccess user={currentUser} />}
+          />
           <Route
             exact
             path="/latest-product/:prodId"

@@ -46,7 +46,7 @@
     transform: translateX(-100px);
     .logo {
       margin-top: 10px;
-      font-size: 12px;
+      font-size: 2.5vw;
       font-weight: 550;
       text-decoration: none;
       color: $primary-color;
@@ -125,6 +125,9 @@
 @media screen and (min-width: 800px) {
   .navBar {
     #{&}__left {
+      .logo {
+        font-size: 1.5vw;
+      }
       .nav-btn {
         & div:nth-child(1) {
           width: 25px;
