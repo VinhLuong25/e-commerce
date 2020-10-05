@@ -15,6 +15,8 @@ import CartSlide from "./components/CartSlide";
 import SaleProduct from "./pages/SaleProduct";
 import CheckOutPage from "./pages/CheckOutPage";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import { addOrder, clearOrder } from "./redux/orderSlice";
+import { firestore } from "./firebase/utils";
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const dispatch = useDispatch();
@@ -39,6 +41,27 @@ function App() {
   useEffect(() => {
     dispatch(fetchProduct());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (currentUser) {
+      firestore
+        .collection("users")
+        .doc(currentUser?.id)
+        .collection("orders")
+        .orderBy("created_at", "desc")
+        .get()
+        .then((snapshot) => {
+          const orderArr = [];
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+            orderArr.push(data);
+          });
+          dispatch(addOrder(orderArr));
+        });
+    } else {
+      dispatch(clearOrder());
+    }
+  }, [dispatch, currentUser]);
 
   return (
     <div className="page-content">

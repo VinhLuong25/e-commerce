@@ -4,33 +4,29 @@ import axios from "axios";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import BillingDetail from "../components/BillingDetail";
 import { useDispatch, useSelector } from "react-redux";
-import { clearCart } from "../redux/cartSlice";
+import { applyDiscount, clearCart } from "../redux/cartSlice";
 import { firestore } from "../firebase/utils";
 import CheckOutProduct from "../components/CheckOutProduct";
+import TotalPrice from "../components/TotalPrice";
 
 export default function CheckOut({ onSuccessfulCheckout }) {
   const [isProcessing, setProcessingTo] = useState(false);
   const [checkoutError, setCheckoutError] = useState();
   const [screenSize, setScreenSize] = useState(window.innerWidth);
   const [show, setShow] = useState(false);
+  const [err, setErr] = useState(null);
   const dispatch = useDispatch();
-  const cart = useSelector((state) => state.cart.cart);
+  const orders = useSelector((state) => state.order.orders);
+
+  const inCart = useSelector((state) => state.cart);
+  console.log(inCart);
+  const cart = inCart.cart;
+  const subtotal = inCart.subtotal;
+  const total = inCart.total;
+  const shippingFee = inCart.shipping;
   const user = useSelector((state) => state.user.currUser);
   const timeStamp = new Date();
-  console.log(timeStamp);
-  console.log(user);
-  //Total Price
-  const subtotal = cart.reduce((acc, curr) => {
-    if (curr.prodDetail.sale) {
-      return acc + curr.quantity * curr.prodDetail.sale;
-    } else {
-      return acc + curr.quantity * curr.prodDetail.price;
-    }
-  }, 0);
-  const shippingFee = cart.length < 1 ? 0 : 15 && subtotal >= 300 ? 0 : 15;
 
-  const total = subtotal + shippingFee;
-  //End Total Price
   const stripe = useStripe();
   const elements = useElements();
 
@@ -49,6 +45,7 @@ export default function CheckOut({ onSuccessfulCheckout }) {
         city: e.target.city.value,
         line1: e.target.address.value,
         state: e.target.state.value,
+        country: e.target.country.value,
       },
     };
     setProcessingTo(true);
@@ -105,9 +102,12 @@ export default function CheckOut({ onSuccessfulCheckout }) {
           .collection("orders")
           .doc(paymentMethod.id)
           .set({
+            created_at: timeStamp,
             basket: cart,
             amount: total,
-            created_at: timeStamp,
+            shipping: shippingFee,
+            subtotal: total,
+            paymentMethodReq: paymentMethodReq,
           });
       }
       onSuccessfulCheckout();
@@ -115,6 +115,24 @@ export default function CheckOut({ onSuccessfulCheckout }) {
     } catch (err) {
       setCheckoutError(err.message);
       setProcessingTo(false);
+    }
+  };
+
+  //HANDLE DISCOUNT SUMIT
+  const handleDiscountSubmit = async (e) => {
+    e.preventDefault();
+    const discount = e.target.coupon.value;
+    console.log(discount.trim());
+    if (discount.trim() === "newuser10") {
+      if (user && orders === null) {
+        dispatch(applyDiscount({ discount: 0.1 }));
+      } else {
+        return setErr("Are you a new user?");
+      }
+    } else if (discount.trim() === "abcdxyz") {
+      dispatch(applyDiscount({ discount: 0.2 }));
+    } else {
+      setErr("Code is not available");
     }
   };
 
@@ -164,20 +182,16 @@ export default function CheckOut({ onSuccessfulCheckout }) {
                 );
               })}
               <hr />
-              <form className="discount">
-                <input type="text" placeholder="Discount Code" />
+              <form className="discount" onSubmit={handleDiscountSubmit}>
+                <input type="text" placeholder="Discount Code" name="coupon" />
                 <input type="submit" value="APPLY" />
               </form>
               <hr />
-              <div className="total">
-                <p>
-                  <span>Total</span>
-                  <br />
-                  <span>*Shipping fee included</span>
-                </p>
-
-                <p>${total}</p>
-              </div>
+              <TotalPrice
+                amount={total}
+                shipping={shippingFee}
+                subtotal={subtotal}
+              />
             </div>
           )}
         </div>
@@ -185,7 +199,7 @@ export default function CheckOut({ onSuccessfulCheckout }) {
 
       <form onSubmit={handleFormSubmit} className="form wrap">
         {screenSize >= 1500 && <h1 className="title">M.A.D</h1>}
-        <BillingDetail />
+        <BillingDetail user={user} />
         <div className="cardElementContainer">
           <CardElement onChange={handleCardDetailsChange} />
         </div>

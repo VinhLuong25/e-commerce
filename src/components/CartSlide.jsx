@@ -3,10 +3,12 @@ import { useRef, useEffect } from "react";
 import ProductInCart from "./ProductInCart";
 import Button from "./forms/Button";
 import { useDispatch, useSelector } from "react-redux";
-import { clearCart } from "../redux/cartSlice";
+import { clearCart, getTotalDetail } from "../redux/cartSlice";
 import { Link } from "react-router-dom";
 export default function CartSlide() {
   const inCart = useSelector((state) => state.cart);
+  const discount = inCart.discount;
+  console.log(discount);
   const ref = useRef(null);
   const cart = inCart.cart;
 
@@ -19,9 +21,17 @@ export default function CartSlide() {
     }
   }, 0);
   const shippingFee = cart.length < 1 ? 0 : 15 && subtotal >= 300 ? 0 : 15;
-
-  const total = subtotal + shippingFee;
-
+  const totalNoDiscount = subtotal + shippingFee;
+  const discountPrice = totalNoDiscount * discount;
+  const total = discount ? totalNoDiscount - discountPrice : totalNoDiscount;
+  dispatch(
+    getTotalDetail({
+      subtotal: subtotal,
+      shippingFee: shippingFee,
+      total: total,
+      discountPrice: discountPrice,
+    })
+  );
   const clearCarts = () => {
     dispatch(clearCart());
   };

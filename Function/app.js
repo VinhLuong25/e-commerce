@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const { urlencoded } = require("express");
 require("dotenv").config();
 const stripe = require("stripe")(process.env.REACT_APP_SECRET_KEY);
 
