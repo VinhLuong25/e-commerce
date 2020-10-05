@@ -631,37 +631,21 @@
           display: flex;
           width: 100%;
           justify-content: center;
-          padding: 25px 0;
+          padding: 20px 0;
           input {
-            height: 50px;
+            outline: black;
+            height: 40px;
+            text-transform: uppercase;
             &:nth-child(1) {
               width: 80%;
-              font-size: 20px;
+              font-size: 12px;
             }
             &:nth-child(2) {
               width: 40%;
               background-color: $primary-color;
               color: $secondary-color;
-              font-size: 25px;
+              font-size: 14px;
               font-weight: bold;
-            }
-          }
-        }
-        .total {
-          display: flex;
-          justify-content: space-between;
-          p {
-            &:nth-child(1) {
-              span {
-                &:nth-child(1) {
-                  font-size: 20px;
-                  font-weight: 550;
-                }
-              }
-            }
-            &:nth-child(2) {
-              font-size: 20px;
-              font-weight: 550;
             }
           }
         }
@@ -738,5 +722,99 @@
     padding: 0 40px;
   }
   .billing-detail {
+  }
+}
+
+//PAYMENT SUCCESS PAGE
+.payment-success {
+  padding: 50px 0;
+  width: 98%;
+  margin: auto;
+  font-size: 18px;
+
+  .order-confirmation {
+    text-align: center;
+    background-color: $secondary-color;
+
+    padding: 25px 0;
+    p {
+      &:nth-child(1) {
+        font-size: 24px;
+        font-weight: 550;
+        text-transform: uppercase;
+      }
+    }
+  }
+
+  .order {
+    &__detail {
+    }
+  }
+
+  .yourOrder {
+    padding-top: 20px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+  }
+}
+@media screen and (min-width: 500px) {
+  .payment-success {
+    width: 80%;
+  }
+  .order {
+    &__detail,
+    .all-detail {
+      .info {
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+  }
+}
+@media screen and (min-width: 1500px) {
+  .payment-success {
+    width: 60%;
+  }
+  .order {
+    &__detail,
+    .all-detail {
+      width: 80%;
+      margin: auto;
+      .info {
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+  }
+}
+.sub-table {
+  font-size: 14px;
+  width: 100%;
+  tr > td,
+  th {
+    &:nth-child(2) {
+      text-align: right;
+    }
+  }
+  tr {
+    th {
+      font-size: 18px;
+    }
+    &:nth-child(2),
+    &:nth-child(4) {
+      td,
+      th {
+        padding: 10px 0;
+      }
+    }
+  }
+}
+@media screen and (min-width: 1500px) {
+  .sub-table {
+    font-size: 16px;
+    tr > th {
+      font-size: 22px;
+    }
   }
 }

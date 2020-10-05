@@ -1,6 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialCart = { cart: [], count: 0 };
+const initialCart = {
+  cart: [],
+  count: 0,
+  discountPrice: null,
+  discount: null,
+  subtotal: null,
+  total: null,
+  shipping: null,
+};
 
 const cartSlice = createSlice({
   name: "cart",
@@ -73,6 +81,15 @@ const cartSlice = createSlice({
       state.cart = b;
       state.count--;
     },
+    getTotalDetail(state, action) {
+      state.subtotal = action.payload.subtotal;
+      state.total = action.payload.total;
+      state.shipping = action.payload.shippingFee;
+      state.discountPrice = action.payload.discountPrice;
+      console.log(action.payload);
+    },
+
+    applyDiscount(state, action) {},
   },
 });
 const { actions, reducer } = cartSlice;
@@ -82,5 +99,7 @@ export const {
   increment,
   decrement,
   removeProduct,
+  getTotalDetail,
+  applyDiscount,
 } = actions;
 export default reducer;

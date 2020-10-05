@@ -6,6 +6,8 @@ import {
 import userSlice from "./userSlice";
 import productSlice from "./productSlice";
 import cartSlice from "./cartSlice";
+import orderSlice from "./orderSlice";
+
 import {
   persistStore,
   persistReducer,
@@ -22,12 +24,13 @@ const reducers = combineReducers({
   user: userSlice,
   cart: cartSlice,
   product: productSlice,
+  order: orderSlice,
 });
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["cart", "user"],
+  whitelist: ["cart", "user", "order"],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);

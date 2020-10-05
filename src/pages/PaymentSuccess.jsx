@@ -1,4 +1,4 @@
-import React, { useEffect, useSelector, useState } from "react";
+import React, { useEffect, useState } from "react";
 import LayOut from "../Common/LayOut";
 import Order from "../components/Order";
 import { firestore } from "../firebase/utils";
@@ -6,7 +6,8 @@ import { firestore } from "../firebase/utils";
 export default function PaymentSuccess({ user }) {
   const [orders, setOrders] = useState([]);
   const [show, setShow] = useState(false);
-
+  console.log(user);
+  console.log(orders.length);
   useEffect(() => {
     if (user) {
       firestore
@@ -32,22 +33,35 @@ export default function PaymentSuccess({ user }) {
   const newOrder = orders.slice(0, 1);
   return (
     <LayOut>
-      <p>Thank you for your purchase</p>
-      <p>Your Order</p>
+      <div className="payment-success">
+        <div className="order-confirmation">
+          <p>order confirmation</p>
+          <p>
+            <span>{user?.displayName}</span>, thank you for your order!
+          </p>
+          <p>
+            We've received your order and will contact you as soon as your
+            package is shipped
+          </p>
+        </div>
 
-      <div className="new-purchase">
-        {newOrder?.map((item, idx) => (
-          <Order order={item} key={idx} />
-        ))}
-      </div>
-      <div onClick={() => setShow(!show)}>{oldOrder && "Last Purchase"}</div>
-      {show && (
-        <div className="old-purchase">
-          {oldOrder?.map((item, idx) => (
+        <p className="yourOrder">Your Order</p>
+        <div className="new-purchase">
+          {newOrder?.map((item, idx) => (
             <Order order={item} key={idx} />
           ))}
         </div>
-      )}
+        <div onClick={() => setShow(!show)}>
+          {orders.length > 1 && "Last Purchase"}
+        </div>
+        {show && (
+          <div className="old-purchase">
+            {oldOrder?.map((item, idx) => (
+              <Order order={item} key={idx} />
+            ))}
+          </div>
+        )}
+      </div>
     </LayOut>
   );
 }
