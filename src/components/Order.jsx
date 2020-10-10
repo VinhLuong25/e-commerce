@@ -3,13 +3,14 @@ import moment from "moment";
 import CheckOutProduct from "./CheckOutProduct";
 import TotalPrice from "./TotalPrice";
 export default function Order({ order }) {
-  const discount = null;
   const {
     amount,
     basket,
     created_at,
     shipping,
     subtotal,
+    discount,
+    discountAmount,
     paymentMethodReq,
   } = order;
   const { address, name } = paymentMethodReq.paymentMethod.billing_details;
@@ -39,12 +40,39 @@ export default function Order({ order }) {
         ))}
         <hr />
 
-        <TotalPrice
-          subtotal={subtotal}
-          discount={discount}
-          shipping={shipping}
-          amount={amount}
-        />
+        <div>
+          <table className="first-table">
+            <tbody>
+              <tr>
+                <td>Subtotal:</td>
+                <td>${subtotal}</td>
+              </tr>
+
+              {/* start - discount here */}
+              {discount && (
+                <tr>
+                  <td>Discount:</td>
+                  <td>-{discountAmount}</td>
+                </tr>
+              )}
+              {/* end - discount here */}
+
+              <tr style={{ paddingBottom: "20px" }}>
+                <td>Shipping fee:</td>
+                <td>${shipping}</td>
+              </tr>
+            </tbody>
+          </table>
+          <hr />
+          <table className="second-table">
+            <tbody>
+              <tr>
+                <th>Total</th>
+                <th>${amount}</th>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
       {/* END - ORDER SUMMARY */}
 

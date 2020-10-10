@@ -4,27 +4,37 @@ import axios from "axios";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import BillingDetail from "../components/BillingDetail";
 import { useDispatch, useSelector } from "react-redux";
-import { applyDiscount, clearCart } from "../redux/cartSlice";
+import { applyDiscount, clearCart, removeDiscount } from "../redux/cartSlice";
 import { firestore } from "../firebase/utils";
 import CheckOutProduct from "../components/CheckOutProduct";
 import TotalPrice from "../components/TotalPrice";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 export default function CheckOut({ onSuccessfulCheckout }) {
   const [isProcessing, setProcessingTo] = useState(false);
   const [checkoutError, setCheckoutError] = useState();
   const [screenSize, setScreenSize] = useState(window.innerWidth);
   const [show, setShow] = useState(false);
   const [err, setErr] = useState(null);
-  const dispatch = useDispatch();
-  const orders = useSelector((state) => state.order.orders);
+  const [loading, setLoading] = useState(false);
 
+  const inPut = document.querySelector(".discount > input");
+
+  const dispatch = useDispatch();
+
+  const user = useSelector((state) => state.user.currUser);
+  const orders = useSelector((state) => state.order.orders);
   const inCart = useSelector((state) => state.cart);
   console.log(inCart);
-  const cart = inCart.cart;
-  const subtotal = inCart.subtotal;
-  const total = inCart.total;
-  const shippingFee = inCart.shipping;
-  const user = useSelector((state) => state.user.currUser);
+  const {
+    cart,
+    total,
+    shipping,
+    subtotal,
+    discountPrice,
+    discount,
+    disabled,
+  } = inCart;
   const timeStamp = new Date();
 
   const stripe = useStripe();
@@ -105,8 +115,10 @@ export default function CheckOut({ onSuccessfulCheckout }) {
             created_at: timeStamp,
             basket: cart,
             amount: total,
-            shipping: shippingFee,
-            subtotal: total,
+            shipping: shipping,
+            discount: discount,
+            discountAmount: discountPrice,
+            subtotal: subtotal,
             paymentMethodReq: paymentMethodReq,
           });
       }
@@ -122,16 +134,24 @@ export default function CheckOut({ onSuccessfulCheckout }) {
   const handleDiscountSubmit = async (e) => {
     e.preventDefault();
     const discount = e.target.coupon.value;
-    console.log(discount.trim());
+
     if (discount.trim() === "newuser10") {
       if (user && orders === null) {
+        setLoading(true);
         dispatch(applyDiscount({ discount: 0.1 }));
       } else {
-        return setErr("Are you a new user?");
+        inPut && inPut.classList.add("error");
+        setErr("Are you a new user?");
       }
     } else if (discount.trim() === "abcdxyz") {
-      dispatch(applyDiscount({ discount: 0.2 }));
+      setLoading(true);
+      setTimeout(() => {
+        dispatch(applyDiscount({ discount: 0.2 }));
+        setLoading(false);
+      }, 1200);
+      console.log("success");
     } else {
+      inPut && inPut.classList.add("error");
       setErr("Code is not available");
     }
   };
@@ -149,7 +169,7 @@ export default function CheckOut({ onSuccessfulCheckout }) {
   useEffect(() => {
     screenSize < 1500 && setShow(false);
   }, [screenSize]);
-
+  console.log(discount);
   return (
     <div className="checkout-page">
       <div className="checkout-cart">
@@ -183,15 +203,61 @@ export default function CheckOut({ onSuccessfulCheckout }) {
               })}
               <hr />
               <form className="discount" onSubmit={handleDiscountSubmit}>
-                <input type="text" placeholder="Discount Code" name="coupon" />
-                <input type="submit" value="APPLY" />
+                <input
+                  id="couponCode"
+                  type="text"
+                  placeholder="Discount Code"
+                  name="coupon"
+                  className="inPut"
+                  disabled={disabled}
+                  onFocus={() => {
+                    setErr(null);
+                    if (inPut && inPut.classList.contains("error")) {
+                      console.log("remove success");
+                      inPut.classList.remove("error");
+                    }
+                  }}
+                />
+                <p className="button">
+                  {discount ? (
+                    <>
+                      <FontAwesomeIcon
+                        icon={faCheck}
+                        color="white"
+                        size="2x"
+                        className="icon"
+                      />
+                      <span className="text">Code Applied</span>
+                    </>
+                  ) : (
+                    <>
+                      {loading ? (
+                        <span className="loading"></span>
+                      ) : (
+                        <Button type="submit" className="code-apply">
+                          Apply
+                        </Button>
+                      )}
+                    </>
+                  )}
+                </p>
               </form>
+              {discount && (
+                <div
+                  className="closebtn"
+                  onClick={() => {
+                    dispatch(removeDiscount());
+                    document.getElementById("couponCode").value = "";
+                  }}
+                >
+                  <FontAwesomeIcon icon={faTimes} /> <span>remove code</span>
+                </div>
+              )}
+
+              {err && <div style={{ color: "#fe8c8c" }}>*{err}</div>}
+
               <hr />
-              <TotalPrice
-                amount={total}
-                shipping={shippingFee}
-                subtotal={subtotal}
-              />
+              <TotalPrice />
             </div>
           )}
         </div>

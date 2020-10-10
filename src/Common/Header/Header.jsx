@@ -67,7 +67,7 @@ export default function Header(props) {
           <div>
             {currentUser ? (
               <div style={{ textAlign: "center" }}>
-                <Link to="/login">
+                <Link to="/account">
                   <i className="fa fa-user" style={{ color: "black" }}></i>
                 </Link>
                 <p

@@ -17,6 +17,9 @@ import CheckOutPage from "./pages/CheckOutPage";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import { addOrder, clearOrder } from "./redux/orderSlice";
 import { firestore } from "./firebase/utils";
+import Account from "./pages/Account";
+import NotFound from "./pages/NotFound";
+import OrderHistory from "./pages/OrderHistory";
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const dispatch = useDispatch();
@@ -63,6 +66,10 @@ function App() {
     }
   }, [dispatch, currentUser]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    console.log("success");
+  }, []);
   return (
     <div className="page-content">
       <Header currentUser={currentUser} />
@@ -92,6 +99,12 @@ function App() {
             component={ProductDetail}
           />
           <Route exact path="/latest-product/:slug" component={ProductDetail} />
+          <Route
+            exact
+            path="/account"
+            render={() => (currentUser ? <Account /> : <NotFound />)}
+          />
+          <Route exact path="/account/order_history" component={OrderHistory} />
         </Switch>
       </div>
 

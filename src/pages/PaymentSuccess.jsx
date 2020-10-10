@@ -1,36 +1,15 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import LayOut from "../Common/LayOut";
 import Order from "../components/Order";
 import { firestore } from "../firebase/utils";
 
 export default function PaymentSuccess({ user }) {
-  const [orders, setOrders] = useState([]);
+  const orders = useSelector((state) => state.order.orders);
   const [show, setShow] = useState(false);
-  console.log(user);
-  console.log(orders.length);
-  useEffect(() => {
-    if (user) {
-      firestore
-        .collection("users")
-        .doc(user?.id)
-        .collection("orders")
-        .orderBy("created_at", "desc")
-        .get()
-        .then((snapshot) => {
-          const orderArr = [];
-          snapshot.forEach((doc) => {
-            const data = doc.data();
-            orderArr.push(data);
-          });
-          setOrders(orderArr);
-        });
-    } else {
-      setOrders([]);
-    }
-  }, [user]);
-
-  const oldOrder = orders.slice(1);
-  const newOrder = orders.slice(0, 1);
+  console.log(orders);
+  const oldOrder = orders && orders.slice(1);
+  const newOrder = orders && orders.slice(0, 1);
   return (
     <LayOut>
       <div className="payment-success">
@@ -52,7 +31,7 @@ export default function PaymentSuccess({ user }) {
           ))}
         </div>
         <div onClick={() => setShow(!show)}>
-          {orders.length > 1 && "Last Purchase"}
+          {orders.length >= 1 && "Last Purchase"}
         </div>
         {show && (
           <div className="old-purchase">

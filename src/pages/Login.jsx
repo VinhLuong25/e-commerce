@@ -66,7 +66,7 @@ export default function Login() {
 
     try {
       const { user } = await auth.signInWithEmailAndPassword(email, password);
-      console.log(user.uid);
+      console.log(user);
       dispatch(
         setUser({
           displayName: user.displayName,

@@ -1,61 +1,42 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
-export default function TotalPrice(props) {
-  const { subtotal, discount, shipping, amount } = props;
+export default function TotalPrice() {
+  const inCart = useSelector((state) => state.cart);
+  const { subtotal, total, shipping, discountPrice, discount } = inCart;
   return (
-    <table className="sub-table">
-      <thead style={{ visibility: "hidden" }}>
-        <tr>
-          <th>
-            <span>title</span>
-          </th>
-          <th>
-            <span>price</span>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Subtotal:</td>
-          <td>${subtotal}</td>
-        </tr>
-
-        {/* start - discount here */}
-        {discount && (
+    <div>
+      <table className="first-table">
+        <tbody>
           <tr>
-            <td>Discount:</td>
-            <td>discount</td>
+            <td>Subtotal:</td>
+            <td>${subtotal}</td>
           </tr>
-        )}
-        {/* end - discount here */}
 
-        <tr>
-          <td>Shipping fee:</td>
-          <td>${shipping}</td>
-        </tr>
+          {/* start - discount here */}
+          {discount && (
+            <tr>
+              <td>Discount:</td>
+              <td>-{discountPrice}</td>
+            </tr>
+          )}
+          {/* end - discount here */}
 
-        <tr>
-          <td
-            style={{
-              width: "100%",
-              height: "1px",
-              background: "rgba(0, 0, 0, 0.1)",
-            }}
-          ></td>
-          <td
-            style={{
-              width: "100%",
-              height: "1px",
-              background: "rgba(0, 0, 0, 0.1)",
-            }}
-          ></td>
-        </tr>
-
-        <tr>
-          <th>Total</th>
-          <th>${amount}</th>
-        </tr>
-      </tbody>
-    </table>
+          <tr style={{ paddingBottom: "20px" }}>
+            <td>Shipping fee:</td>
+            <td>${shipping}</td>
+          </tr>
+        </tbody>
+      </table>
+      <hr />
+      <table className="second-table">
+        <tbody>
+          <tr>
+            <th>Total</th>
+            <th>${total}</th>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   );
 }

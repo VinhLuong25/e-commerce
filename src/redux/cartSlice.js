@@ -8,6 +8,7 @@ const initialCart = {
   subtotal: null,
   total: null,
   shipping: null,
+  disabled: null,
 };
 
 const cartSlice = createSlice({
@@ -89,7 +90,15 @@ const cartSlice = createSlice({
       console.log(action.payload);
     },
 
-    applyDiscount(state, action) {},
+    applyDiscount(state, action) {
+      state.discount = action.payload.discount;
+      state.disabled = true;
+      console.log(state.discount);
+    },
+    removeDiscount(state) {
+      state.discount = null;
+      state.disabled = false;
+    },
   },
 });
 const { actions, reducer } = cartSlice;
@@ -101,5 +110,6 @@ export const {
   removeProduct,
   getTotalDetail,
   applyDiscount,
+  removeDiscount,
 } = actions;
 export default reducer;
